@@ -1,0 +1,7 @@
+version: '3.10'
+
+services:
+  bot:
+    container_name: MirageCoordinator
+    build: .
+    restart: unless-stopped
