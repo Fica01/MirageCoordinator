@@ -1,4 +1,5 @@
 import logging
+import os
 
 import requests
 import validators
@@ -26,8 +27,10 @@ async def send_image(update: Update, context: ContextTypes.DEFAULT_TYPE):
         image_formats = ("image/png", "image/jpeg", "image/jpg", "image/webp",
                          "image/gif", "image/bmp", "image/tiff", "image/svg+xml")
         r = requests.head(image_url)
-        print(r.headers["content-type"])
         if r.headers["content-type"] in image_formats:
+            # Create 'images' directory if it doesn't exist
+            os.makedirs('images', exist_ok=True)
+
             image_context = requests.get(image_url).content
             with open('images/' + image_url.split('/')[-1], 'wb') as handler:
                 handler.write(image_context)
@@ -45,6 +48,9 @@ async def send_video(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not validators.url(video_url):
         await context.bot.send_message(chat_id=update.effective_chat.id, text="Please enter a valid URL")
     else:
+        # Create 'videos' directory if it doesn't exist
+        os.makedirs('videos', exist_ok=True)
+
         ydl_opts = {
             'outtmpl': 'videos/' + "%(id)s.%(ext)s",
             'format_sort': ['res:1080', 'ext:mp4:m4a']
